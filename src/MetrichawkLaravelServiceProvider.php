@@ -2,57 +2,61 @@
 
 namespace Metrichawk\MetrichawkLaravel;
 
+use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Support\ServiceProvider;
+use Throwable;
 
 class MetrichawkLaravelServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap the application services.
+     * @throws Throwable
      */
     public function boot()
     {
-        /*
-         * Optional methods to load your package assets
-         */
-        // $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'metrichawk-laravel');
-        // $this->loadViewsFrom(__DIR__.'/../resources/views', 'metrichawk-laravel');
-        // $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
-        // $this->loadRoutesFrom(__DIR__.'/routes.php');
+        if (! config('metrichawk.enabled')) {
+            return;
+        }
+
+        $this->ensureDsnExists();
+        $this->ensureLaravelConstantExists();
 
         if ($this->app->runningInConsole()) {
             $this->publishes([
-                __DIR__.'/../config/config.php' => config_path('metrichawk-laravel.php'),
+                __DIR__ . '/../config/config.php' => config_path('config.php'),
             ], 'config');
 
-            // Publishing the views.
-            /*$this->publishes([
-                __DIR__.'/../resources/views' => resource_path('views/vendor/metrichawk-laravel'),
-            ], 'views');*/
-
-            // Publishing assets.
-            /*$this->publishes([
-                __DIR__.'/../resources/assets' => public_path('vendor/metrichawk-laravel'),
-            ], 'assets');*/
-
-            // Publishing the translation files.
-            /*$this->publishes([
-                __DIR__.'/../resources/lang' => resource_path('lang/vendor/metrichawk-laravel'),
-            ], 'lang');*/
-
-            // Registering package commands.
-            // $this->commands([]);
+            return;
         }
+
+        MetrichawkLaravel::start($this->app);
     }
+
+    /**
+     * @throws Throwable
+     */
+    private function ensureDsnExists()
+    {
+        throw_if(in_array(config('metrichawk.dsn'), [null, '']) === true, new \Exception('METRICHAWK_DSN environment variable is not defined.'));
+    }
+
+    /**
+     * @throws Throwable
+     */
+    private function ensureLaravelConstantExists()
+    {
+        throw_if(constant('LARAVEL_START') === null, new \Exception('Constant LARAVEL_START not defined in index.php'));
+    }
+
+
 
     /**
      * Register the application services.
      */
     public function register()
     {
-        // Automatically apply the package configuration
-        $this->mergeConfigFrom(__DIR__.'/../config/config.php', 'metrichawk-laravel');
+        $this->mergeConfigFrom(__DIR__ . '/../config/config.php', 'metrichawk');
 
-        // Register the main class to use with the facade
         $this->app->singleton('metrichawk-laravel', function () {
             return new MetrichawkLaravel;
         });
