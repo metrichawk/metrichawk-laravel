@@ -10,6 +10,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 use GuzzleHttp\Client;
+use Jenssegers\Agent\Agent;
 
 class MonitorMiddleware
 {
@@ -45,46 +46,35 @@ class MonitorMiddleware
         $endsAt = Carbon::parse(new DateTime(date('Y-m-d H:i:s.' . $micro, $endTime)));
 
 
+        /** @var Agent $agent */
+        $agent = resolve(Agent::class);
+
         $data = [
+            'duration' => $durationInMs,
+
             'environment' => app()->environment(),
             'starts_at' => $startsAt->timestamp,
             'ends_at' => $endsAt->timestamp,
             'full_url' => $request->fullUrl(),
             'method' => $request->method(),
             'path' => $request->path(),
-            'client_ip' => $request->getClientIp(),
+            'client_ip' => request()->server('HTTP_CF_CONNECTING_IP') ?? $request->ip(),
             'host' => $request->getHost(),
             'locale' => $request->getLocale(),
 
-            'duration' => $durationInMs,
+            'browser'          => $agent->browser(),
+            'browser_version'  => $agent->version($agent->browser()),
+            'device'           => $agent->device(),
+            'country'          => $request->server('HTTP_CF_IPCOUNTRY') ?? null,
+            'device_type'      => self::getDeviceType($agent),
+            'platform'         => $agent->platform(),
+            'platform_version' => $agent->version($agent->platform()),
 
             'route_name' => Route::current()->getName(),
             'response_status' => $response->getStatusCode(),
             'controller_action' => optional($request->route())->getActionName(),
-            'middleware' => array_values(optional($request->route())->gatherMiddleware() ?? []),
-            'headers' => $this->headers($request->headers->all()),
+            'middleware' => implode(',', array_values(optional($request->route())->gatherMiddleware() ?? [])),
             'memory' => round(memory_get_peak_usage(true) / 1024 / 1025, 1),
-        ];
-
-
-        $dimensions = [
-            ['Name' => 'environment', 'Value' => app()->environment()],
-            ['Name' => 'start_time', 'Value' => strval($startsAt->timestamp)],
-            ['Name' => 'end_time', 'Value' => strval($endsAt->timestamp)],
-            ['Name' => 'full_url', 'Value' => $request->fullUrl()],
-            ['Name' => 'method', 'Value' => $request->method()],
-            ['Name' => 'path', 'Value' => $request->path()],
-            ['Name' => 'client_ip', 'Value' => $request->getClientIp()],
-            ['Name' => 'host', 'Value' => $request->getHost()],
-            ['Name' => 'locale', 'Value' => $request->getLocale()],
-        ];
-
-        $records = [
-            'Dimensions' => $dimensions,
-            'MeasureName' => 'request_duration',
-            'MeasureValue' => strval($durationInMs),
-            'MeasureValueType' => 'DOUBLE',
-            'Time' => strval(intval($startTime * 1000)),
         ];
 
         $requestDsn = config('metrichawk.dsn') . '/r/d';
@@ -92,9 +82,25 @@ class MonitorMiddleware
         $client = new Client(['verify' => false]);
         $client->post($requestDsn, [
             'json' => [
-                'records' => $records
+                'records' => $data
             ]
         ]);
+    }
+
+    /**
+     * @param Agent $agent
+     *
+     * @return string
+     */
+    protected function getDeviceType(Agent $agent): string
+    {
+        if ($agent->isMobile()) {
+            return 'mobile';
+        } elseif ($agent->isTablet()) {
+            return 'tablet';
+        }
+
+        return 'desktop';
     }
 
     /**

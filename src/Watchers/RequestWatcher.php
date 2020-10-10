@@ -21,7 +21,7 @@ class RequestWatcher extends Watcher
      */
     public function register($app)
     {
-        $app->singleton(MonitorMiddleware::class);
+        //$app->singleton(MonitorMiddleware::class);
         //$dispatcher = new EventDispatcher();
         //$dispatcher->addListener(KernelEvents::TERMINATE, function (Event $event){
         //    dd($event);
