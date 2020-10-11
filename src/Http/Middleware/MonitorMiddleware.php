@@ -27,15 +27,14 @@ class MonitorMiddleware
     }
 
     /**
-     * @param Request $request
-     * @param         $response
-     *
+     * @param $request
+     * @param $response
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function terminate(Request $request, Response $response)
+    public function terminate($request, $response)
     {
         $endTime = microtime(true);
-        $startTime = constant('LARAVEL_START') ?? null;
+        $startTime = defined('LARAVEL_START') ? LARAVEL_START : $request->server('REQUEST_TIME_FLOAT');
 
         $durationInMs = round(($endTime - $startTime) * 1000, 2);
 
