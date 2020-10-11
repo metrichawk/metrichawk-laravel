@@ -20,7 +20,6 @@ class MetrichawkLaravelServiceProvider extends ServiceProvider
         }
 
         $this->ensureDsnExists();
-        $this->ensureLaravelConstantExists();
 
         if ($this->app->runningInConsole() === true) {
             $this->publishes([
@@ -40,16 +39,6 @@ class MetrichawkLaravelServiceProvider extends ServiceProvider
     {
         throw_if(in_array(config('metrichawk.dsn'), [null, '']) === true, new MetrichawkLaravelException('METRICHAWK_DSN environment variable is not defined.'));
     }
-
-    /**
-     * @throws Throwable
-     */
-    private function ensureLaravelConstantExists()
-    {
-        throw_if(constant('LARAVEL_START') === null, new MetrichawkLaravelException('Constant LARAVEL_START not defined in index.php'));
-    }
-
-
 
     /**
      * Register the application services.
