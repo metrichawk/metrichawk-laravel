@@ -4,6 +4,7 @@ namespace Metrichawk\MetrichawkLaravel;
 
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Support\ServiceProvider;
+use Metrichawk\MetrichawkLaravel\Exceptions\MetrichawkLaravelException;
 use Throwable;
 
 class MetrichawkLaravelServiceProvider extends ServiceProvider
@@ -37,7 +38,7 @@ class MetrichawkLaravelServiceProvider extends ServiceProvider
      */
     private function ensureDsnExists()
     {
-        throw_if(in_array(config('metrichawk.dsn'), [null, '']) === true, new \Exception('METRICHAWK_DSN environment variable is not defined.'));
+        throw_if(in_array(config('metrichawk.dsn'), [null, '']) === true, new MetrichawkLaravelException('METRICHAWK_DSN environment variable is not defined.'));
     }
 
     /**
@@ -45,7 +46,7 @@ class MetrichawkLaravelServiceProvider extends ServiceProvider
      */
     private function ensureLaravelConstantExists()
     {
-        throw_if(constant('LARAVEL_START') === null, new \Exception('Constant LARAVEL_START not defined in index.php'));
+        throw_if(constant('LARAVEL_START') === null, new MetrichawkLaravelException('Constant LARAVEL_START not defined in index.php'));
     }
 
 

@@ -43,7 +43,7 @@ class RequestWatcher extends Watcher
         $request = $event->getRequest();
 
         $end   = microtime(true);
-        $start = constant('LARAVEL_START');
+        $start = defined('LARAVEL_START') ? LARAVEL_START : $request->server('REQUEST_TIME_FLOAT');
 
         $durationInMs = round(($end - $start) * 1000, 2);
 
