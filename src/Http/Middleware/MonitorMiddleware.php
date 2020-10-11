@@ -69,7 +69,7 @@ class MonitorMiddleware
             'platform'         => $agent->platform(),
             'platform_version' => $agent->version($agent->platform()),
 
-            'route_name' => Route::current()->getName(),
+            'route_name' => optional(Route::current())->getName(),
             'response_status' => $response->getStatusCode(),
             'controller_action' => optional($request->route())->getActionName(),
             'middleware' => implode(',', array_values(optional($request->route())->gatherMiddleware() ?? [])),
