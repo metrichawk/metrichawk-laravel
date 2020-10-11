@@ -6,7 +6,7 @@ use Metrichawk\MetrichawkLaravel\Watchers;
  * You can place your custom package configuration in here.
  */
 return [
-    'enabled' => true,
+    'enabled' => env('METRICHAWK_ENABLED', true),
     'dsn' => env('METRICHAWK_DSN'),
     'watchers' => [
         Watchers\RequestWatcher::class => [

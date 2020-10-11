@@ -14,14 +14,14 @@ class MetrichawkLaravelServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        if (! config('metrichawk.enabled')) {
+        if (config('metrichawk.enabled') === false) {
             return;
         }
 
         $this->ensureDsnExists();
         $this->ensureLaravelConstantExists();
 
-        if ($this->app->runningInConsole()) {
+        if ($this->app->runningInConsole() === true) {
             $this->publishes([
                 __DIR__ . '/../config/config.php' => config_path('metrichawk.php'),
             ], 'config');
