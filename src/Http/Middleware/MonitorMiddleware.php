@@ -72,7 +72,7 @@ class MonitorMiddleware
             'route_name' => optional(Route::current())->getName(),
             'response_status' => $response->getStatusCode(),
             'controller_action' => optional($request->route())->getActionName(),
-            'middleware' => implode(',', array_values(optional($request->route())->gatherMiddleware() ?? [])),
+            //'middleware' => implode(',', array_values(optional($request->route())->gatherMiddleware() ?? [])),
             'memory' => round(memory_get_peak_usage(true) / 1024 / 1025, 1),
         ];
 
