@@ -36,24 +36,15 @@ class MonitorMiddleware
         $endTime = microtime(true);
         $startTime = defined('LARAVEL_START') ? LARAVEL_START : $request->server('REQUEST_TIME_FLOAT');
 
-        $durationInMs = round(($endTime - $startTime) * 1000, 2);
-
-        $micro = sprintf("%06d", ($startTime - floor($startTime)) * 1000000);
-        $startsAt = Carbon::parse(new DateTime(date('Y-m-d H:i:s.' . $micro, $startTime)));
-
-        $micro = sprintf("%06d", ($endTime - floor($endTime)) * 1000000);
-        $endsAt = Carbon::parse(new DateTime(date('Y-m-d H:i:s.' . $micro, $endTime)));
-
-
         /** @var Agent $agent */
         $agent = resolve(Agent::class);
 
         $data = [
-            'duration' => $durationInMs,
+            //'duration' => $durationInMs,
 
             'environment' => app()->environment(),
-            'starts_at' => $startsAt->timestamp,
-            'ends_at' => $endsAt->timestamp,
+            'starts_at' => $startTime, //$startsAt->timestamp,
+            'ends_at' => $endTime, //$endsAt->timestamp,
             'full_url' => $request->fullUrl(),
             'method' => $request->method(),
             'path' => $request->path(),
