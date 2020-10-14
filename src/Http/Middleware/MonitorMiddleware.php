@@ -12,6 +12,7 @@ use Illuminate\Support\Str;
 use GuzzleHttp\Client;
 use Jenssegers\Agent\Agent;
 use Exception;
+use Metrichawk\MetrichawkLaravel\Helpers\IpAnonymizer;
 
 class MonitorMiddleware
 {
@@ -41,15 +42,13 @@ class MonitorMiddleware
         $agent = resolve(Agent::class);
 
         $data = [
-            //'duration' => $durationInMs,
-
             'environment' => app()->environment(),
-            'starts_at' => $startTime, //$startsAt->timestamp,
-            'ends_at' => $endTime, //$endsAt->timestamp,
+            'starts_at' => $startTime,
+            'ends_at' => $endTime,
             'full_url' => $request->fullUrl(),
             'method' => $request->method(),
             'path' => $request->path(),
-            'client_ip' => request()->server('HTTP_CF_CONNECTING_IP') ?? $request->ip(),
+            'client_ip' => IpAnonymizer::anonymizeIp(request()->server('HTTP_CF_CONNECTING_IP') ?? $request->ip()),
             'host' => $request->getHost(),
             'locale' => $request->getLocale(),
 
