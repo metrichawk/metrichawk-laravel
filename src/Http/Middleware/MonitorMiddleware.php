@@ -75,17 +75,11 @@ class MonitorMiddleware
         ]);
 
         try {
-            $start = microtime(true);
-
             $client->post($requestDsn, [
                 'json' => [
                     'records' => $data
                 ]
             ]);
-
-            $duration = microtime(true) - $start;
-
-            info($duration);
         } catch (Exception $exception) {
             // @TODO : something goes wrong
         }
