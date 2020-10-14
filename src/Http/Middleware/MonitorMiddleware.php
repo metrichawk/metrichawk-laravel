@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 use GuzzleHttp\Client;
 use Jenssegers\Agent\Agent;
+use Exception;
 
 class MonitorMiddleware
 {
@@ -52,12 +53,12 @@ class MonitorMiddleware
             'host' => $request->getHost(),
             'locale' => $request->getLocale(),
 
-            'browser'          => $agent->browser(),
-            'browser_version'  => $agent->version($agent->browser()),
-            'device'           => $agent->device(),
-            'country'          => $request->server('HTTP_CF_IPCOUNTRY') ?? null,
-            'device_type'      => self::getDeviceType($agent),
-            'platform'         => $agent->platform(),
+            'browser' => $agent->browser(),
+            'browser_version' => $agent->version($agent->browser()),
+            'device' => $agent->device(),
+            'country' => $request->server('HTTP_CF_IPCOUNTRY') ?? null,
+            'device_type' => self::getDeviceType($agent),
+            'platform' => $agent->platform(),
             'platform_version' => $agent->version($agent->platform()),
 
             'route_name' => optional(Route::current())->getName(),
@@ -69,12 +70,26 @@ class MonitorMiddleware
 
         $requestDsn = config('metrichawk.dsn') . '/r/d';
 
-        $client = new Client(['verify' => false]);
-        $client->post($requestDsn, [
-            'json' => [
-                'records' => $data
-            ]
+        $client = new Client([
+            'verify' => false,
+            'timeout' => 1
         ]);
+
+        try {
+            $start = microtime(true);
+
+            $client->post($requestDsn, [
+                'json' => [
+                    'records' => $data
+                ]
+            ]);
+
+            $duration = microtime(true) - $start;
+
+            info($duration);
+        } catch (Exception $exception) {
+            // @TODO : something goes wrong
+        }
     }
 
     /**
