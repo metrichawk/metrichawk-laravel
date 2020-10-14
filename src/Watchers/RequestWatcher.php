@@ -13,10 +13,7 @@ use DateTime;
 class RequestWatcher extends Watcher
 {
     /**
-     * Register the watcher.
-     *
      * @param \Illuminate\Contracts\Foundation\Application $app
-     * @return void
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
     public function register($app)
