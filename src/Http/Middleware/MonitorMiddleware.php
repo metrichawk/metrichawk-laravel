@@ -41,6 +41,9 @@ class MonitorMiddleware
         /** @var Agent $agent */
         $agent = resolve(Agent::class);
 
+        $browser = $agent->browser();
+        $platform = $agent->platform();
+
         $data = [
             'environment' => app()->environment(),
             'starts_at' => $startTime,
@@ -52,13 +55,13 @@ class MonitorMiddleware
             'host' => $request->getHost(),
             'locale' => $request->getLocale(),
 
-            'browser' => $agent->browser(),
-            'browser_version' => $agent->version($agent->browser()),
+            'browser' => $browser,
+            'browser_version' => $agent->version($browser),
             'device' => $agent->device(),
             'country' => $request->server('HTTP_CF_IPCOUNTRY') ?? null,
             'device_type' => self::getDeviceType($agent),
-            'platform' => $agent->platform(),
-            'platform_version' => $agent->version($agent->platform()),
+            'platform' => $platform,
+            'platform_version' => $agent->version($platform),
 
             'route_name' => optional(Route::current())->getName(),
             'response_status' => $response->getStatusCode(),
