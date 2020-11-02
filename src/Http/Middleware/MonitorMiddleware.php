@@ -29,6 +29,10 @@ class MonitorMiddleware
     }
 
     /**
+     * TODO
+     * On Vapor, terminate is not called after the response
+     * Maybe : add a Job ? attach data to the view and send with JS ?
+     *
      * @param $request
      * @param $response
      * @throws \GuzzleHttp\Exception\GuzzleException
@@ -53,21 +57,23 @@ class MonitorMiddleware
             'path' => $request->path(),
             'client_ip' => IpAnonymizer::anonymizeIp(request()->server('HTTP_CF_CONNECTING_IP') ?? $request->ip()),
             'host' => $request->getHost(),
+            'referer' => $request->headers()->get('referer'),
             'locale' => $request->getLocale(),
 
             'browser' => $browser,
             'browser_version' => $agent->version($browser),
             'device' => $agent->device(),
             'country' => $request->server('HTTP_CF_IPCOUNTRY') ?? null,
-            'device_type' => self::getDeviceType($agent),
+            'device_type' => $agent->deviceType(),
             'platform' => $platform,
             'platform_version' => $agent->version($platform),
 
             'route_name' => optional(Route::current())->getName(),
             'response_status' => $response->getStatusCode(),
             'controller_action' => optional($request->route())->getActionName(),
-            //'middleware' => implode(',', array_values(optional($request->route())->gatherMiddleware() ?? [])),
+
             'memory' => round(memory_get_peak_usage(true) / 1024 / 1025, 1),
+            'cpu' => sys_getloadavg(),
         ];
 
         $requestDsn = config('metrichawk.dsn') . '/r/d';
@@ -86,22 +92,6 @@ class MonitorMiddleware
         } catch (Exception $exception) {
             // @TODO : something goes wrong
         }
-    }
-
-    /**
-     * @param Agent $agent
-     *
-     * @return string
-     */
-    protected function getDeviceType(Agent $agent): string
-    {
-        if ($agent->isMobile()) {
-            return 'mobile';
-        } elseif ($agent->isTablet()) {
-            return 'tablet';
-        }
-
-        return 'desktop';
     }
 
     /**

@@ -11,7 +11,9 @@ return [
     'watchers' => [
         Watchers\RequestWatcher::class => [
             'enabled' => env('METRICHAWK_REQUEST_WATCHER', true),
-            'size_limit' => env('METRICHAWK_RESPONSE_SIZE_LIMIT', 64),
+        ],
+        Watchers\QueryWatcher::class => [
+            'enabled' => env('METRICHAWK_QUERY_WATCHER', true),
         ]
     ]
 ];
