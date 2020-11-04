@@ -48,6 +48,8 @@ class MonitorMiddleware
         $browser = $agent->browser();
         $platform = $agent->platform();
 
+        dump($_SERVER['HTTP_REFERER'] ?? '-');
+
         $data = [
             'environment' => app()->environment(),
             'starts_at' => $startTime,
@@ -57,20 +59,20 @@ class MonitorMiddleware
             'path' => $request->path(),
             'client_ip' => IpAnonymizer::anonymizeIp(request()->server('HTTP_CF_CONNECTING_IP') ?? $request->ip()),
             'host' => $request->getHost(),
-            'referer' => $request->headers()->get('referer'),
+            'referer' => $_SERVER['HTTP_REFERER'] ?? '-',
             'locale' => $request->getLocale(),
 
             'browser' => $browser,
             'browser_version' => $agent->version($browser),
             'device' => $agent->device(),
-            'country' => $request->server('HTTP_CF_IPCOUNTRY') ?? null,
+            'country' => $request->server('HTTP_CF_IPCOUNTRY') ?? '-',
             'device_type' => $agent->deviceType(),
             'platform' => $platform,
             'platform_version' => $agent->version($platform),
 
             'route_name' => optional(Route::current())->getName(),
             'response_status' => $response->getStatusCode(),
-            'controller_action' => optional($request->route())->getActionName(),
+            'controller_action' => optional($request->route())->getActionName() ?? '-',
 
             'memory' => round(memory_get_peak_usage(true) / 1024 / 1025, 1),
             'cpu' => sys_getloadavg(),
