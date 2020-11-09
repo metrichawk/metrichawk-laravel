@@ -2,6 +2,10 @@
 
 namespace Metrichawk\MetrichawkLaravel\Traits;
 
+use Illuminate\Support\Arr;
+use Metrichawk\MetrichawkLaravel\Watchers\MainWatcher;
+use Metrichawk\MetrichawkLaravel\Watchers\RequestWatcher;
+
 trait RegistersWatchers
 {
     /**
@@ -14,7 +18,7 @@ trait RegistersWatchers
     /**
      * Determine if a given watcher has been registered.
      *
-     * @param  string  $class
+     * @param string $class
      * @return bool
      */
     public static function hasWatcher($class)
@@ -25,17 +29,22 @@ trait RegistersWatchers
     /**
      * Register the configured Telescope watchers.
      *
-     * @param  \Illuminate\Foundation\Application  $app
+     * @param \Illuminate\Foundation\Application $app
      * @return void
      */
     protected static function registerWatchers($app)
     {
-        foreach (config('metrichawk.watchers') as $key => $watcher) {
+        $watchers = config('metrichawk.watchers');
+
+        // Necessary watchers
+        $watchers = Arr::prepend($watchers, ['enabled' => true], RequestWatcher::class);
+
+        foreach ($watchers as $key => $watcher) {
             if (is_string($key) && $watcher === false) {
                 continue;
             }
 
-            if (is_array($watcher) && ! ($watcher['enabled'] ?? true)) {
+            if (is_array($watcher) && !($watcher['enabled'] ?? true)) {
                 continue;
             }
 

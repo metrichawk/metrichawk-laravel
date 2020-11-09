@@ -9,6 +9,7 @@ use Illuminate\Foundation\Http\Events\RequestHandled;
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Support\Facades\DB;
 use Metrichawk\MetrichawkLaravel\Http\Middleware\MonitorMiddleware;
+use Metrichawk\MetrichawkLaravel\MetrichawkLaravel;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Contracts\EventDispatcher\Event;
 use DateTime;
@@ -28,33 +29,22 @@ class QueryWatcher extends Watcher
      */
     public function recordQuery(QueryExecuted $event)
     {
-        $time = $event->time;
+        $duration = $event->time;
 
-//        dump([
-//            'connection' => $event->connectionName,
-//            'bindings' => [],
-//            'sql' => $this->replaceBindings($event),
-//            'time' => number_format($time, 2, '.', ''),
+        MetrichawkLaravel::recordQuery([
+            'connection' => $event->connectionName,
+            'bindings' => [],
+            'sql' => $this->replaceBindings($event),
+            'duration' => $duration,
 //            'slow' => isset($this->options['slow']) && $time >= $this->options['slow'],
-//            'hash' => $this->familyHash($event),
-//        ]);
-
-//        if ($caller = $this->getCallerFromStackTrace()) {
-//            Telescope::recordQuery(IncomingEntry::make([
-//                'connection' => $event->connectionName,
-//                'bindings' => [],
-//                'sql' => $this->replaceBindings($event),
-//                'time' => number_format($time, 2, '.', ''),
-//                'slow' => isset($this->options['slow']) && $time >= $this->options['slow'],
-//                'hash' => $this->familyHash($event),
-//            ])->tags($this->tags($event)));
-//        }
+            'hash' => $this->familyHash($event),
+        ]);
     }
 
     /**
      * Get the tags for the query.
      *
-     * @param  \Illuminate\Database\Events\QueryExecuted  $event
+     * @param \Illuminate\Database\Events\QueryExecuted $event
      * @return array
      */
     protected function tags($event)
@@ -65,7 +55,7 @@ class QueryWatcher extends Watcher
     /**
      * Calculate the family look-up hash for the query event.
      *
-     * @param  \Illuminate\Database\Events\QueryExecuted  $event
+     * @param \Illuminate\Database\Events\QueryExecuted $event
      * @return string
      */
     public function familyHash($event)
@@ -76,7 +66,7 @@ class QueryWatcher extends Watcher
     /**
      * Format the given bindings to strings.
      *
-     * @param  \Illuminate\Database\Events\QueryExecuted  $event
+     * @param \Illuminate\Database\Events\QueryExecuted $event
      * @return array
      */
     protected function formatBindings($event)
@@ -87,7 +77,7 @@ class QueryWatcher extends Watcher
     /**
      * Replace the placeholders with the actual bindings.
      *
-     * @param  \Illuminate\Database\Events\QueryExecuted  $event
+     * @param \Illuminate\Database\Events\QueryExecuted $event
      * @return string
      */
     public function replaceBindings($event)
@@ -101,7 +91,7 @@ class QueryWatcher extends Watcher
 
             if ($binding === null) {
                 $binding = 'null';
-            } elseif (! is_int($binding) && ! is_float($binding)) {
+            } elseif (!is_int($binding) && !is_float($binding)) {
                 $binding = $event->connection->getPdo()->quote($binding);
             }
 
