@@ -3,6 +3,7 @@
 namespace Metrichawk\MetrichawkLaravel\Traits;
 
 use Illuminate\Support\Arr;
+use Metrichawk\MetrichawkLaravel\Watchers\CommonWatcher;
 use Metrichawk\MetrichawkLaravel\Watchers\MainWatcher;
 use Metrichawk\MetrichawkLaravel\Watchers\RequestWatcher;
 
@@ -38,6 +39,7 @@ trait RegistersWatchers
 
         // Necessary watchers
         $watchers = Arr::prepend($watchers, ['enabled' => true], RequestWatcher::class);
+        $watchers = Arr::prepend($watchers, ['enabled' => true], CommonWatcher::class);
 
         foreach ($watchers as $key => $watcher) {
             if (is_string($key) && $watcher === false) {

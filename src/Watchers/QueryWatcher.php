@@ -32,7 +32,7 @@ class QueryWatcher extends Watcher
         $duration = $event->time;
 
         MetrichawkLaravel::recordQuery([
-            'connection' => $event->connectionName,
+            'connection_name' => $event->connectionName,
             'bindings' => [],
             'sql' => $this->replaceBindings($event),
             'duration' => $duration,

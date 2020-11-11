@@ -15,6 +15,7 @@ class MetrichawkLaravel
 {
     use RegistersWatchers;
 
+    const MH_COMMON = 'mh_common';
     const MH_QUERIES = 'mh_queries';
     const MH_REQUESTS = 'mh_requests';
     const MH_SYSTEM = 'mh_system';
@@ -53,6 +54,14 @@ class MetrichawkLaravel
     public static function recordSystem(array $values)
     {
         self::recordData(self::MH_SYSTEM, $values);
+    }
+
+    /**
+     * @param array $values
+     */
+    public static function recordCommon(array $values)
+    {
+        self::recordData(self::MH_COMMON, $values);
     }
 
     /**
