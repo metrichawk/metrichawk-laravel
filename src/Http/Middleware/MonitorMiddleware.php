@@ -41,7 +41,6 @@ class MonitorMiddleware
         ]);
 
         try {
-            // TODO : maybe attached to the response and send data with js client to avoid supplementary time
             $client->post($requestDsn, [
                 'json' => [
                     'records' => [
