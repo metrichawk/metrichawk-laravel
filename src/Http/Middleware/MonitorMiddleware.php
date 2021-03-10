@@ -3,8 +3,8 @@
 namespace Metrichawk\MetrichawkLaravel\Http\Middleware;
 
 use Closure;
-use GuzzleHttp\Client;
 use Exception;
+use GuzzleHttp\Client;
 use Illuminate\Support\Collection;
 use Metrichawk\MetrichawkLaravel\MetrichawkLaravel;
 
@@ -13,7 +13,7 @@ class MonitorMiddleware
     /**
      * @param         $request
      * @param Closure $next
-     * @param null $guard
+     * @param null    $guard
      *
      * @return mixed
      */
@@ -29,6 +29,7 @@ class MonitorMiddleware
      *
      * @param $request
      * @param $response
+     *
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function terminate($request, $response)
@@ -36,20 +37,20 @@ class MonitorMiddleware
         $requestDsn = config('metrichawk.dsn');
 
         $client = new Client([
-            'verify' => false,
-            'timeout' => 1
+            'verify'  => false,
+            'timeout' => 1,
         ]);
 
         try {
             $client->post($requestDsn, [
                 'json' => [
                     'records' => [
-                        'common' => $GLOBALS[MetrichawkLaravel::MH_COMMON],
+                        'common'   => $GLOBALS[MetrichawkLaravel::MH_COMMON],
                         'requests' => $GLOBALS[MetrichawkLaravel::MH_REQUESTS],
-                        'queries' => $this->formatQueryData(),
-                        'system' => $GLOBALS[MetrichawkLaravel::MH_SYSTEM],
-                    ]
-                ]
+                        'queries'  => $this->formatQueryData(),
+                        'system'   => $GLOBALS[MetrichawkLaravel::MH_SYSTEM],
+                    ],
+                ],
             ]);
         } catch (Exception $exception) {
             // @TODO : something goes wrong
@@ -65,7 +66,7 @@ class MonitorMiddleware
 
         $queriesByConnection = collect($GLOBALS[MetrichawkLaravel::MH_QUERIES])->groupBy('connection_name');
 
-        $queriesByConnection->each(function(Collection $queries, string $connectionName) use (&$data) {
+        $queriesByConnection->each(function (Collection $queries, string $connectionName) use (&$data) {
             $sqlDuration = $queries->sum('duration');
 
             $sqlDuplicationCount = $queries->countBy('hash')->sum(function ($count) {
@@ -77,9 +78,10 @@ class MonitorMiddleware
             });
 
             $data[] = [
-                'connection_name' => $connectionName,
-                'duration' => $sqlDuration,
+                'connection_name'   => $connectionName,
+                'duration'          => $sqlDuration,
                 'duplication_count' => $sqlDuplicationCount,
+                'request_count'     => $queries->count(),
             ];
         });
 
