@@ -45,14 +45,17 @@ class MonitorMiddleware
             $client->post($requestDsn, [
                 'json' => [
                     'records' => [
-                        'common'   => $GLOBALS[MetrichawkLaravel::MH_COMMON],
-                        'requests' => $GLOBALS[MetrichawkLaravel::MH_REQUESTS],
-                        'queries'  => $this->formatQueryData(),
-                        'system'   => $GLOBALS[MetrichawkLaravel::MH_SYSTEM],
-                    ],
-                ],
+                        'common' => $GLOBALS[MetrichawkLaravel::MH_COMMON],
+                        'requests' => $GLOBALS[MetrichawkLaravel::MH_REQUESTS] ?? [],
+                        'queries' => $this->formatQueryData(),
+                        'system' => $GLOBALS[MetrichawkLaravel::MH_SYSTEM] ?? [],
+                    ]
+                ]
             ]);
         } catch (Exception $exception) {
+            logger()->error($exception->getFile());
+            logger()->error($exception->getLine());
+            logger()->error($exception->getMessage());
             // @TODO : something goes wrong
         }
     }
@@ -62,6 +65,10 @@ class MonitorMiddleware
      */
     public function formatQueryData(): array
     {
+        if(isset($GLOBALS[MetrichawkLaravel::MH_QUERIES]) === false) {
+            return [];
+        }
+
         $data = [];
 
         $queriesByConnection = collect($GLOBALS[MetrichawkLaravel::MH_QUERIES])->groupBy('connection_name');
