@@ -2,12 +2,7 @@
 
 namespace Metrichawk\MetrichawkLaravel;
 
-use Carbon\Carbon;
-use GuzzleHttp\Client;
 use Illuminate\Contracts\Http\Kernel;
-use Illuminate\Support\Facades\Route;
-use Jenssegers\Agent\Agent;
-use Metrichawk\MetrichawkLaravel\Helpers\IpAnonymizer;
 use Metrichawk\MetrichawkLaravel\Http\Middleware\MonitorMiddleware;
 use Metrichawk\MetrichawkLaravel\Traits\RegistersWatchers;
 

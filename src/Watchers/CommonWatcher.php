@@ -2,18 +2,11 @@
 
 namespace Metrichawk\MetrichawkLaravel\Watchers;
 
-use Carbon\Carbon;
-use GuzzleHttp\Client;
 use Illuminate\Foundation\Http\Events\RequestHandled;
-use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Support\Facades\Route;
 use Jenssegers\Agent\Agent;
 use Metrichawk\MetrichawkLaravel\Helpers\IpAnonymizer;
-use Metrichawk\MetrichawkLaravel\Http\Middleware\MonitorMiddleware;
 use Metrichawk\MetrichawkLaravel\MetrichawkLaravel;
-use Symfony\Component\HttpKernel\Event\TerminateEvent;
-use Symfony\Contracts\EventDispatcher\Event;
-use DateTime;
 
 class CommonWatcher extends Watcher
 {

@@ -2,17 +2,8 @@
 
 namespace Metrichawk\MetrichawkLaravel\Watchers;
 
-use Carbon\Carbon;
-use GuzzleHttp\Client;
 use Illuminate\Database\Events\QueryExecuted;
-use Illuminate\Foundation\Http\Events\RequestHandled;
-use Illuminate\Contracts\Http\Kernel;
-use Illuminate\Support\Facades\DB;
-use Metrichawk\MetrichawkLaravel\Http\Middleware\MonitorMiddleware;
 use Metrichawk\MetrichawkLaravel\MetrichawkLaravel;
-use Symfony\Component\EventDispatcher\EventDispatcher;
-use Symfony\Contracts\EventDispatcher\Event;
-use DateTime;
 
 class QueryWatcher extends Watcher
 {

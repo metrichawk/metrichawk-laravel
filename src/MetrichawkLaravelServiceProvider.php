@@ -2,7 +2,6 @@
 
 namespace Metrichawk\MetrichawkLaravel;
 
-use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Support\ServiceProvider;
 use Metrichawk\MetrichawkLaravel\Exceptions\MetrichawkLaravelException;
 use Throwable;
