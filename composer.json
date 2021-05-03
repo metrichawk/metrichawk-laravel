@@ -1,0 +1,56 @@
+{
+    "name": "metrichawk/metrichawk-laravel",
+    "description": "Laravel Application Monitoring",
+    "keywords": [
+        "metrichawk",
+        "metrichawk-laravel"
+    ],
+    "homepage": "https://github.com/metrichawk/metrichawk-laravel",
+    "license": "MIT",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Sébastien FONTAINE",
+            "email": "hello@sebastienfontaine.me",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^7.1",
+        "guzzlehttp/guzzle": "^6.0|^7.1",
+        "illuminate/support": "^6.0|^7.0|^8.0",
+        "jenssegers/agent": "^2.6"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^4.0",
+        "phpunit/phpunit": "^8.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Metrichawk\\MetrichawkLaravel\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Metrichawk\\MetrichawkLaravel\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
+
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Metrichawk\\MetrichawkLaravel\\MetrichawkLaravelServiceProvider"
+            ],
+            "aliases": {
+                "MetrichawkLaravel": "Metrichawk\\MetrichawkLaravel\\MetrichawkLaravelFacade"
+            }
+        }
+    }
+}
