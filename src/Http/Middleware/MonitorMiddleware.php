@@ -36,8 +36,8 @@ class MonitorMiddleware
         $data = [
             'records' => [
                 'common'   => $GLOBALS[MetrichawkLaravel::MH_COMMON],
-                'requests' => $GLOBALS[MetrichawkLaravel::MH_REQUESTS] ?? null,
-                'queries'  => $GLOBALS[MetrichawkLaravel::MH_QUERIES],
+                'requests' => $GLOBALS[MetrichawkLaravel::MH_REQUESTS],
+                'queries'  => $GLOBALS[MetrichawkLaravel::MH_QUERIES] ?? null,
                 'system'   => $GLOBALS[MetrichawkLaravel::MH_SYSTEM],
             ],
         ];
