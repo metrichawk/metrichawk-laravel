@@ -54,8 +54,8 @@ class MonitorMiddleware
             return;
         }
 
-        if($data['queries'] !== null) {
-            $data['queries'] = resolve(CollectorService::class)->formatQueryData($data['queries']);
+        if ($data['records']['queries'] !== null) {
+            $data['records']['queries'] = resolve(CollectorService::class)->formatQueryData($data['records']['queries']);
         }
 
         retry(5, function () use ($requestDsn, $data) {
