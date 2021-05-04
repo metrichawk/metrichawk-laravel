@@ -43,7 +43,9 @@ class ExportJob implements ShouldQueue
 
     public function handle(): void
     {
-        $this->data['queries'] = resolve(CollectorService::class)->formatQueryData($this->data['queries']);
+        if ($this->data['queries'] !== null) {
+            $this->data['queries'] = resolve(CollectorService::class)->formatQueryData($this->data['queries']);
+        }
 
         try {
             retry(5, function () {

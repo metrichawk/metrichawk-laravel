@@ -36,7 +36,7 @@ class MonitorMiddleware
         $data = [
             'records' => [
                 'common'   => $GLOBALS[MetrichawkLaravel::MH_COMMON],
-                'requests' => $GLOBALS[MetrichawkLaravel::MH_REQUESTS],
+                'requests' => $GLOBALS[MetrichawkLaravel::MH_REQUESTS] ?? null,
                 'queries'  => $GLOBALS[MetrichawkLaravel::MH_QUERIES],
                 'system'   => $GLOBALS[MetrichawkLaravel::MH_SYSTEM],
             ],
@@ -54,7 +54,9 @@ class MonitorMiddleware
             return;
         }
 
-        $data['queries'] = resolve(CollectorService::class)->formatQueryData($data['queries']);
+        if($data['queries'] !== null) {
+            $data['queries'] = resolve(CollectorService::class)->formatQueryData($data['queries']);
+        }
 
         retry(5, function () use ($requestDsn, $data) {
             resolve(CollectorService::class)->sendData($requestDsn, $data);
