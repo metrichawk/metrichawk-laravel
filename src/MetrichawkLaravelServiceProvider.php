@@ -3,13 +3,13 @@
 namespace Metrichawk\MetrichawkLaravel;
 
 use Illuminate\Support\ServiceProvider;
-use Metrichawk\MetrichawkLaravel\Exceptions\MetrichawkLaravelException;
 use Throwable;
 
 class MetrichawkLaravelServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap the application services.
+     *
      * @throws Throwable
      */
     public function boot()
@@ -18,7 +18,9 @@ class MetrichawkLaravelServiceProvider extends ServiceProvider
             return;
         }
 
-        $this->ensureDsnExists();
+        if ($this->ensureDsnExists() === false) {
+            return;
+        }
 
         if ($this->app->runningInConsole() === true) {
             $this->publishes([
@@ -36,7 +38,7 @@ class MetrichawkLaravelServiceProvider extends ServiceProvider
      */
     private function ensureDsnExists()
     {
-        throw_if(in_array(config('metrichawk.dsn'), [null, '']) === true, new MetrichawkLaravelException('METRICHAWK_DSN environment variable is not defined.'));
+        return in_array(config('metrichawk.dsn'), [null, '']) === false;
     }
 
     /**
