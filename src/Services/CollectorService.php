@@ -25,7 +25,9 @@ class CollectorService
                 'json' => $data,
             ]);
         } catch (GuzzleException $e) {
+            report($e);
         } catch (Exception $exception) {
+            report($exception);
         }
     }
 
