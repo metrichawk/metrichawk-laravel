@@ -13,7 +13,7 @@ class MonitorMiddleware
     /**
      * @param         $request
      * @param Closure $next
-     * @param null    $guard
+     * @param null $guard
      *
      * @return mixed
      */
@@ -30,15 +30,19 @@ class MonitorMiddleware
      */
     public function terminate($request, $response)
     {
+        if (MetrichawkLaravel::isAllowedRequest($request) === false) {
+            return;
+        }
+
         $requestDsn = config('metrichawk.dsn');
-        $jobConfig  = config('metrichawk.job');
+        $jobConfig = config('metrichawk.job');
 
         $data = [
             'records' => [
-                'common'   => $GLOBALS[MetrichawkLaravel::MH_COMMON],
+                'common' => $GLOBALS[MetrichawkLaravel::MH_COMMON],
                 'requests' => $GLOBALS[MetrichawkLaravel::MH_REQUESTS],
-                'queries'  => $GLOBALS[MetrichawkLaravel::MH_QUERIES] ?? null,
-                'system'   => $GLOBALS[MetrichawkLaravel::MH_SYSTEM] ?? null,
+                'queries' => $GLOBALS[MetrichawkLaravel::MH_QUERIES] ?? null,
+                'system' => $GLOBALS[MetrichawkLaravel::MH_SYSTEM] ?? null,
             ],
         ];
 

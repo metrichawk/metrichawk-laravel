@@ -24,8 +24,9 @@ class QueryWatcher extends Watcher
 
         MetrichawkLaravel::recordQuery([
             'connection_name' => $event->connectionName,
-            'bindings' => [],
-            'sql' => $this->replaceBindings($event),
+            'bindings' => json_encode($event->bindings),
+            //'sql' => $this->replaceBindings($event),
+            'sql' => $event->sql,
             'duration' => $duration,
 //            'slow' => isset($this->options['slow']) && $time >= $this->options['slow'],
             'hash' => $this->familyHash($event),
@@ -51,7 +52,8 @@ class QueryWatcher extends Watcher
      */
     public function familyHash($event)
     {
-        return md5($event->sql);
+        // xxHash is an extremely fast hashing algorithm that is not designed for cryptographic purposes
+        return hash('xxh128', $event->sql);
     }
 
     /**

@@ -53,11 +53,20 @@ class CollectorService
                 return 0;
             });
 
+            $groupedSql = $queries->map(function(array $query) {
+                return [
+                    'sql' => $query['sql'],
+                    'duration' => $query['duration'],
+                ];
+            });
+
             $data[] = [
                 'connection_name'   => $connectionName,
                 'duration'          => $sqlDuration,
                 'duplication_count' => $sqlDuplicationCount,
                 'request_count'     => $queries->count(),
+                'sql'               => $groupedSql->toArray(),
+                'bindings'          => $queries->pluck('bindings')->toArray(),
             ];
         });
 

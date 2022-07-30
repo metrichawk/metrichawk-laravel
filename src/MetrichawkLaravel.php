@@ -3,6 +3,7 @@
 namespace Metrichawk\MetrichawkLaravel;
 
 use Illuminate\Contracts\Http\Kernel;
+use Illuminate\Http\Request;
 use Metrichawk\MetrichawkLaravel\Http\Middleware\MonitorMiddleware;
 use Metrichawk\MetrichawkLaravel\Traits\RegistersWatchers;
 
@@ -25,6 +26,17 @@ class MetrichawkLaravel
         $kernel->pushMiddleware(MonitorMiddleware::class);
 
         static::registerWatchers($app);
+    }
+
+    public static function isAllowedRequest(Request $request): bool
+    {
+        foreach (config('metrichawk.ignore_url') as $pattern) {
+            if ($request->is($pattern) === true) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**

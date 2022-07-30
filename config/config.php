@@ -31,4 +31,13 @@ return [
         'is_active'  => true,
         'queue_name' => env('METRICHAWK_QUEUE_NAME', 'default'),
     ],
+
+    'ignore_url' => [
+        'telescope*',
+        'vendor/telescope*',
+        'horizon*',
+        'vendor/horizon*',
+        'nova*',
+        '_debugbar*',
+    ],
 ];
